@@ -6,6 +6,7 @@ use Crypt::CBC;
 use IO::Prompter;
 use MIME::Base64;
 use Getopt::Long;
+use Data::Dumper;
 use JSON qw(decode_json);
 
 my $file;
@@ -20,12 +21,10 @@ my $password = prompt 'Enter your password:', -echo=>'*';
 
 my $json_out = aes_cbc_dec($file, $password);
 
-my $parameter_a = $json_out->{'parameter_a'};
-my $parameter_b = $json_out->{'parameter_b'};
-print "result: $parameter_a, $parameter_b\n";
+print Dumper($json_out);
 
 sub aes_cbc_dec {
-    my ($file, $password, $refList) = @_;
+    my ($file, $password) = @_;
 
     my $obj = do {
         local $/ = undef;
