@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use Crypt::CBC;
-use IO::Prompter;
+use Term::Prompt;
 use MIME::Base64;
 use Getopt::Long;
 use Data::Dumper;
@@ -17,10 +17,10 @@ GetOptions(
 
 die "$0 requires the file argument (--file)\n" unless $file;
 
-my $password = prompt 'Enter your password:', -echo=>'*';
+my $password = prompt('p', 'Enter your password:', '', '' );
 
 my $json_out = aes_cbc_dec($file, $password);
-
+print "\n";
 print Dumper($json_out);
 
 sub aes_cbc_dec {
@@ -34,9 +34,11 @@ sub aes_cbc_dec {
 
     my $decoded = decode_base64($obj);
     my $cipher = Crypt::CBC->new(
-        -key    => $password,
-        -cipher => "Crypt::OpenSSL::AES",
-        -pbkdf  => 'pbkdf2',
+        -pass    => $password,
+        -cipher  => "Crypt::OpenSSL::AES",
+        -pbkdf   => 'pbkdf2'
+        # -keysize => '32',
+        # -iter    => '500000'
     );
 
     my $decrypted = $cipher->decrypt($decoded);

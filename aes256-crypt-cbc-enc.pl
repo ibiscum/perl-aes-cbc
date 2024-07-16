@@ -24,16 +24,21 @@ my $obj = do {
 my $password = prompt 'Enter your password:', -echo=>'*';
 
 my $cipher = Crypt::CBC->new(
-    -key    => $password,
-    -cipher => "Crypt::OpenSSL::AES",
-    -pbkdf  => 'pbkdf2',
+    -pass    => $password,
+    -cipher  => 'Crypt::OpenSSL::AES',
+    -pbkdf   => 'pbkdf2'
+    #-keysize => '32',
+    #-iter    => '500000'
 );
+
+print $cipher->cipher() . "\n";
+print $cipher->keysize() . "\n";
 
 my $encrypted = $cipher->encrypt($obj);
 my $encoded = encode_base64($encrypted);
 
 my ($base_name, $type) = split(/\./, $file);
-my $file_enc = $base_name . "_enc.cnf";
+my $file_enc = $base_name . "_enc_b64.cnf";
 
 my $fh_out;
 open($fh_out, '>', $file_enc) or die "can't create $file_enc: $!\n";
